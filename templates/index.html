@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CareerPilot AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>CareerPilot AI</h1>
+        <p>AI-powered ATS Resume Checker, Job Application Optimizer, and Skill Gap Analyzer</p>
+    </header>
+
+    <section class="hero">
+        <h2>Build a stronger job application with AI</h2>
+        <p>
+            Paste your resume, job description, or target role.
+            CareerPilot AI will analyze your gaps and give practical next steps.
+        </p>
+    </section>
+
+    <section class="card">
+        <label>Select Tool</label>
+        <select id="toolType">
+            <option value="ats">ATS Resume Checker</option>
+            <option value="optimizer">Job Application Optimizer</option>
+            <option value="skillgap">Skill Gap Analyzer</option>
+        </select>
+
+        <label>Target Role</label>
+        <input id="targetRole" placeholder="Example: Cloud Engineer Intern">
+
+        <label>Your Resume / Skills</label>
+        <textarea id="resume" placeholder="Paste your resume or current skills here..."></textarea>
+
+        <label>Job Description</label>
+        <textarea id="jobDescription" placeholder="Paste the job description here..."></textarea>
+
+        <button onclick="analyzeCareer()">Analyze with AI</button>
+    </section>
+
+    <section class="result-card">
+        <h2>AI Result</h2>
+        <div id="loading" class="hidden">Analyzing... please wait.</div>
+        <pre id="result">Your AI result will appear here.</pre>
+    </section>
+
+    <footer>
+        <p>Built with Flask, Nginx, OpenAI API, and secure server-side AI integration.</p>
+    </footer>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
