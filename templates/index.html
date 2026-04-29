@@ -7,49 +7,86 @@
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>CareerPilot AI</h1>
-        <p>AI-powered ATS Resume Checker, Job Application Optimizer, and Skill Gap Analyzer</p>
-    </header>
+<div class="page">
+
+    <nav class="navbar">
+        <div class="brand">
+            <div class="logo">CP</div>
+            <div>
+                <h1>CareerPilot AI</h1>
+                <p>Student career intelligence platform</p>
+            </div>
+        </div>
+        <div class="nav-badge">ATS + AI Roadmap</div>
+    </nav>
 
     <section class="hero">
-        <h2>Build a stronger job application with AI</h2>
-        <p>
-            Paste your resume, job description, or target role.
-            CareerPilot AI will analyze your gaps and give practical next steps.
-        </p>
+        <div>
+            <span class="eyebrow">Resume Match • Skill Roadmap • Job Readiness</span>
+            <h2>Turn a job description into a personalized career plan.</h2>
+            <p>
+                CareerPilot AI analyzes your resume against a real job description,
+                calculates a stable match score, and shows what to improve, learn, and build next.
+            </p>
+        </div>
+
+        <div class="hero-card">
+            <h3>What you get</h3>
+            <ul>
+                <li>Stable ATS-style match score</li>
+                <li>Hard skills comparison</li>
+                <li>Resume quality checks</li>
+                <li>AI learning roadmap</li>
+            </ul>
+        </div>
     </section>
 
-    <section class="card">
-        <label>Select Tool</label>
-        <select id="toolType">
-            <option value="ats">ATS Resume Checker</option>
-            <option value="optimizer">Job Application Optimizer</option>
-            <option value="skillgap">Skill Gap Analyzer</option>
-        </select>
+    <main class="workspace">
 
-        <label>Target Role</label>
-        <input id="targetRole" placeholder="Example: Cloud Engineer Intern">
+        <section class="input-panel">
+            <div class="panel-title">
+                <h2>Analyze Your Application</h2>
+                <p>Paste your resume and job description below.</p>
+            </div>
 
-        <label>Your Resume / Skills</label>
-        <textarea id="resume" placeholder="Paste your resume or current skills here..."></textarea>
+            <label>Select Tool</label>
+            <select id="toolType">
+                <option value="ats">ATS Resume Checker</option>
+                <option value="optimizer">Job Application Optimizer</option>
+                <option value="skillgap">Skill Gap Analyzer</option>
+            </select>
 
-        <label>Job Description</label>
-        <textarea id="jobDescription" placeholder="Paste the job description here..."></textarea>
+            <label>Target Role</label>
+            <input id="targetRole" placeholder="Example: Cloud Engineer Intern">
 
-        <button onclick="analyzeCareer()">Analyze with AI</button>
-    </section>
+            <label>Your Resume / Skills</label>
+            <textarea id="resume" placeholder="Paste your resume here..."></textarea>
 
-    <section class="result-card">
-        <h2>AI Result</h2>
-        <div id="loading" class="hidden">Analyzing... please wait.</div>
-        <pre id="result">Your AI result will appear here.</pre>
-    </section>
+            <label>Job Description</label>
+            <textarea id="jobDescription" placeholder="Paste the job description here..."></textarea>
 
-    <footer>
-        <p>Built with Flask, Nginx, OpenAI API, and secure server-side AI integration.</p>
-    </footer>
+            <button class="primary-btn" onclick="analyzeCareer()">Analyze with AI</button>
+        </section>
+
+        <section class="output-panel">
+            <div class="panel-title">
+                <h2>CareerPilot Report</h2>
+                <p>Your match score, skill comparison, and roadmap will appear here.</p>
+            </div>
+
+            <div id="loading" class="hidden">
+                <div class="loader"></div>
+                <span>Analyzing your resume...</span>
+            </div>
+
+            <div id="result" class="result-placeholder">
+                <h3>Ready when you are.</h3>
+                <p>Choose a tool, paste your details, and click Analyze with AI.</p>
+            </div>
+        </section>
+
+    </main>
+
 </div>
 
 <script src="/static/script.js"></script>
