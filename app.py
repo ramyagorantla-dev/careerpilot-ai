@@ -4,14 +4,15 @@ import os
 
 app = Flask(__name__)
 
+# Load API Key
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-2.5-flash")
+if not GEMINI_API_KEY:
+    print("ERROR: GEMINI_API_KEY not found")
 else:
-    print("WARNING: GEMINI_API_KEY is missing")
-    model = None
+    genai.configure(api_key=GEMINI_API_KEY)
+
+model = genai.GenerativeModel("gemini-2.0-flash")  # stable model
 
 
 @app.route("/")
@@ -33,15 +34,14 @@ def career_ai():
             return jsonify({"error": "Please select a tool."}), 400
 
         if tool_type in ["ats", "optimizer"] and (not resume or not job_description):
-            return jsonify({"error": "Please paste both resume and job description."}), 400
+            return jsonify({"error": "Resume & job description required."}), 400
 
-        if tool_type == "skillgap" and (not resume or not target_role):
-            return jsonify({"error": "Please enter resume and target role."}), 400
+        if tool_type == "skillgap" and not target_role:
+            return jsonify({"error": "Target role required."}), 400
 
         system_prompt = """
-        You are CareerPilot AI, an expert technical recruiter, ATS resume reviewer,
-        career coach, and skill-gap advisor. Give practical, structured, real-world advice.
-        Avoid generic answers. Use clear headings and bullet points.
+        You are CareerPilot AI, an expert recruiter and career coach.
+        Give structured, realistic, actionable advice.
         """
 
         if tool_type == "ats":
@@ -51,70 +51,45 @@ def career_ai():
             Resume:
             {resume}
 
-            Job Description:
+            Job:
             {job_description}
 
-            Provide:
-            - ATS Match Score (0–100)
-            - Matching keywords
-            - Missing keywords
-            - Weak areas
+            Give:
+            - ATS score (0-100)
+            - Matching skills
+            - Missing skills
             - Improvements
-            - 3 improved resume bullets
             """
 
         elif tool_type == "optimizer":
             user_prompt = f"""
-            Improve this job application.
+            Improve this application:
 
             Resume:
             {resume}
 
-            Job Description:
+            Job:
             {job_description}
-
-            Provide:
-            - Why it may get rejected
-            - What to add/remove
-            - Improved summary
-            - Skills improvements
-            - Experience improvements
-            - Interview questions
             """
 
         else:
             user_prompt = f"""
-            Create a skill gap roadmap.
+            Skill gap roadmap:
 
-            Target Role:
-            {target_role}
-
-            Current Skills:
-            {resume}
-
-            Provide:
-            - Required skills
-            - Current strengths
-            - Skills to build next
-            - 30-day roadmap
-            - 3 project ideas
-            - Interview topics
+            Role: {target_role}
+            Current: {resume}
             """
 
         final_prompt = system_prompt + "\n\n" + user_prompt
 
-        if model is None:
-            return jsonify({
-                "result": "AI service is temporarily unavailable because the Gemini API key is not configured."
-            })
-
         response = model.generate_content(final_prompt)
+
         return jsonify({"result": response.text})
 
     except Exception as e:
         print("ERROR:", str(e))
         return jsonify({
-            "error": "AI service is temporarily unavailable. Please try again."
+            "error": "AI temporarily unavailable"
         }), 500
 
 
