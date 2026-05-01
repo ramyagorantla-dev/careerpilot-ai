@@ -4,15 +4,14 @@ import os
 
 app = Flask(__name__)
 
-# Load Gemini API Key from environment
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY is not set in environment variables")
-
-genai.configure(api_key=GEMINI_API_KEY)
-
-model = genai.GenerativeModel("gemini-2.5-flash")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    model = genai.GenerativeModel("gemini-2.5-flash")
+else:
+    print("WARNING: GEMINI_API_KEY is missing")
+    model = None
 
 
 @app.route("/")
@@ -30,27 +29,21 @@ def career_ai():
         job_description = data.get("job_description", "")
         target_role = data.get("target_role", "")
 
-        # Validation
         if not tool_type:
             return jsonify({"error": "Please select a tool."}), 400
 
         if tool_type in ["ats", "optimizer"] and (not resume or not job_description):
             return jsonify({"error": "Please paste both resume and job description."}), 400
 
-        if tool_type == "skillgap" and not target_role:
-            return jsonify({"error": "Please enter your target role."}), 400
+        if tool_type == "skillgap" and (not resume or not target_role):
+            return jsonify({"error": "Please enter resume and target role."}), 400
 
-        # System Prompt
         system_prompt = """
         You are CareerPilot AI, an expert technical recruiter, ATS resume reviewer,
-        career coach, and skill-gap advisor.
-
-        Give practical, structured, real-world advice.
-        Avoid generic answers.
-        Use clear headings and bullet points.
+        career coach, and skill-gap advisor. Give practical, structured, real-world advice.
+        Avoid generic answers. Use clear headings and bullet points.
         """
 
-        # Tool Logic
         if tool_type == "ats":
             user_prompt = f"""
             Analyze resume vs job description.
@@ -89,7 +82,7 @@ def career_ai():
             - Interview questions
             """
 
-        else:  # skillgap
+        else:
             user_prompt = f"""
             Create a skill gap roadmap.
 
@@ -102,7 +95,7 @@ def career_ai():
             Provide:
             - Required skills
             - Current strengths
-            - Missing skills
+            - Skills to build next
             - 30-day roadmap
             - 3 project ideas
             - Interview topics
@@ -110,8 +103,12 @@ def career_ai():
 
         final_prompt = system_prompt + "\n\n" + user_prompt
 
-        response = model.generate_content(final_prompt)
+        if model is None:
+            return jsonify({
+                "result": "AI service is temporarily unavailable because the Gemini API key is not configured."
+            })
 
+        response = model.generate_content(final_prompt)
         return jsonify({"result": response.text})
 
     except Exception as e:
@@ -122,5 +119,5 @@ def career_ai():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
