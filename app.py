@@ -19,6 +19,12 @@ model = genai.GenerativeModel("gemini-2.0-flash")  # stable model
 def home():
     return render_template("index.html")
 
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "running",
+        "ai_configured": model is not None
+    })
 
 @app.route("/api/career", methods=["POST"])
 def career_ai():
